@@ -1,5 +1,6 @@
 import serial
 import time
+import os
 
 
 def get_month_string(month):
@@ -35,29 +36,40 @@ def get_month_string(month):
 def create_file_name(time_struct, month_string):
 
     filename = str(time_struct[0]) + '-' + month_string + '-' + str(time_struct[1]) + '.' + str(time_struct[3]) + '.' + str(
-        time_struct[4]) + '.' + str(time_struct[5]) + '.LapTimes' + '.txt'
+        time_struct[4]) + '.' + str(time_struct[5]) + '.LapTimes'
 
-    return filename
+    save_path = 'C:/Users/charl/Desktop/RaceTimes/'
+
+    complete_name = os.path.join(save_path, filename+'.txt')
+
+    return complete_name
 
 
 def main():
 
-    ser = serial.Serial("COM7", baudrate=9600, timeout=1)
-    time_struct = time.localtime()
-
-    month = time_struct[2]
-    month_string = get_month_string(month)
-
-    filename = create_file_name(time_struct, month_string)
-
-    time_file = open(filename, 'w+')
+    ser = serial.Serial("COM5", baudrate=9600, timeout=1)
 
     while 1:
-        arduino_data = ser.readline().decode()
-        if arduino_data != '':
-            if arduino_data[0] == '[':
-                time_file.write(arduino_data)
-                print(arduino_data)
+
+        time_struct = time.localtime()
+
+        month = time_struct[2]
+        month_string = get_month_string(month)
+
+        complete_name = create_file_name(time_struct, month_string)
+
+        time_file = open(complete_name, 'w')
+
+        while 1:
+            arduino_data = ser.readline().decode()
+            if arduino_data != '':
+                if arduino_data[0] == '[':
+                    time_file.write(arduino_data)
+                    print(arduino_data)
+                    if arduino_data[1] == 'F':
+                        print('End of Race\n')
+                        time_file.close()
+                        break
 
 
 main()
