@@ -34,7 +34,7 @@ def get_month_string(month):
 
 def create_file_name(time_struct, month_string):
 
-    filename = month_string + '.' + str(time_struct[1]) + '.' + str(time_struct[3]) + '.' + str(
+    filename = str(time_struct[0]) + '-' + month_string + '-' + str(time_struct[1]) + '.' + str(time_struct[3]) + '.' + str(
         time_struct[4]) + '.' + str(time_struct[5]) + '.LapTimes' + '.txt'
 
     return filename
